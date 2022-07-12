@@ -1,0 +1,27 @@
+# Path to preprocessed DWI data
+DWI_PATH=
+# Path to b-values file
+BVAL_PATH=
+# Path to b-vector file
+BVEC_PATH=
+# Path to brain mask
+MASK_PATH=
+# Path to noise sigmas
+SIGMA_PATH=
+# Path to noise Ns
+N_PATH=
+# Basename for outputs
+OUTPUT_BASE=
+# List of deconvolution ratios
+RATIOS=(1.1 1.2 1.4 1.6 1.8 2.0 2.2 2.4 2.6 2.8 3.0 3.5 4.0 4.5 5.0 5.5 6.0)
+# Maximum SH order
+SHMAX=8
+# Relative amplitude threshold for peak extraction
+PEAK_REL_TH=0.25
+# Minimum separation (in degrees) for peak extraction
+PEAK_ANG_SEP=25
+# Patch size for AIC neighborhood (1 to turn OFF)  
+PATCHSIZE=3
+# Number of threads for multiprocessing (-1 for all available CPUs)
+NCORE=1
+
