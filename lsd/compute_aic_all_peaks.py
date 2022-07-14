@@ -10,7 +10,7 @@ from dipy.io import read_bvals_bvecs
 from dipy.core.gradients import gradient_table
 from dipy.sims.voxel import multi_tensor
 
-from odf_utils import true_MD_func
+from odf_utils import true_MD_func, eigenval_from_param
 
 from dipy.reconst.shm import real_sh_descoteaux
 
@@ -147,9 +147,12 @@ def main():
         # MD_est = np.log(data_vox.mean())/(-mean_bval)
         MD_est = MD_from_SM(data_vox.mean())
 
-        meval = np.array([1.0, 1/ratio, 1/ratio])
-        K = MD_est / ((1+2/ratio)/3)
-        meval *= K
+        # meval = np.array([1.0, 1/ratio, 1/ratio])
+        # K = MD_est / ((1+2/ratio)/3)
+        # meval *= K
+        Dpar, Dperp = eigenval_from_param(MD_est, ratio)
+        meval = np.array([Dpar, Dperp, Dperp])
+        
 
         vox_npeak = (peak_len_vox>0).sum()
 

@@ -170,6 +170,10 @@ def Dperp_from_param(MD, ratio):
 	dpar = Dpar_from_param(MD, ratio)
 	return dpar / ratio
 
+def eigenval_from_param(MD, ratio):
+	dpar = Dpar_from_param(MD, ratio)
+	return dpar, dpar / ratio
+
 def D_Delta_from_param(MD, ratio):
 	Dpar = Dpar_from_param(MD, ratio)
 	Dperp = Dperp_from_param(MD, ratio)
