@@ -10,7 +10,7 @@ from dipy.io import read_bvals_bvecs
 from dipy.core.gradients import gradient_table
 from dipy.sims.voxel import multi_tensor
 
-from odf_utils import true_MD_func, eigenval_from_param
+from odf_utils import true_MD_func, eigenval_from_param, gen_signal_tensor_conv
 
 from dipy.reconst.shm import real_sh_descoteaux
 
@@ -151,22 +151,24 @@ def main():
         # K = MD_est / ((1+2/ratio)/3)
         # meval *= K
         Dpar, Dperp = eigenval_from_param(MD_est, ratio)
-        meval = np.array([Dpar, Dperp, Dperp])
+        # meval = np.array([Dpar, Dperp, Dperp])
         
 
         vox_npeak = (peak_len_vox>0).sum()
-
         # use all peaks
         Npeaks = vox_npeak
 
 
-        mevals = np.repeat(meval[None, :], Npeaks, axis=0)
+        # mevals = np.repeat(meval[None, :], Npeaks, axis=0)
 
-        dirss = peak_dir_vox[:Npeaks]
-        vol_frac = peak_len_vox[:Npeaks]
-        vol_frac /= vol_frac.sum()
+        # dirss = peak_dir_vox[:Npeaks]
+        # vol_frac = peak_len_vox[:Npeaks]
+        # vol_frac /= vol_frac.sum()
 
-        noiseless_signal, _ = multi_tensor(gtab, mevals=mevals, S0=1, angles=dirss, fractions=100*vol_frac, snr=None)
+        # noiseless_signal, _ = multi_tensor(gtab, mevals=mevals, S0=1, angles=dirss, fractions=100*vol_frac, snr=None)
+        noiseless_signal = gen_signal_tensor_conv(gtab, peak_dir_vox[:Npeaks], peak_len_vox[:Npeaks], Dpar, Dperp)
+
+
 
         diffs = data_vox - noiseless_signal[~gtab.b0s_mask]
 

@@ -201,6 +201,22 @@ def true_MD_func(meanbval, ratio, minMD, maxMD, N_MD=1000):
 
 
 
+def gen_signal_tensor_conv(gtab, odf_dirs, odf_val, Dpar, Dperp):
+
+		Nodf = len(odf_val)
+
+		meval = np.array([Dpar, Dperp, Dperp])
+        mevals = np.repeat(meval[None, :], Nodf, axis=0)
+
+        vol_frac = odf_val / odf_val.sum()
+
+        noiseless_signal, _ = multi_tensor(gtab, mevals=mevals, S0=1, angles=odf_dirs, fractions=100*vol_frac, snr=None)
+
+        return noiseless_signal
+
+
+
+
 
 
 
