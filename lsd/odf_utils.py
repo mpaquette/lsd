@@ -281,6 +281,19 @@ def extract_patches(arr, patch_shape, extraction_step, flatten=True):
 
 
 
+def vec_angle(X1, X2):
+    if (np.linalg.norm(X1) > 0) and (np.linalg.norm(X2) > 0):
+        # Make vectors unity
+        X1 = X1 / np.linalg.norm(X1)
+        X2 = X2 / np.linalg.norm(X2)
+
+        # Return minumum angle between vectors and one inverted vector
+        angle =  min(np.abs(np.arccos(np.clip(np.dot(X1, X2), -1., 1.))), np.abs(np.arccos(np.clip(np.dot(-X1, X2), -1., 1.))))
+
+    else: 
+        angle = 0.
+
+    return angle
 
 
 
