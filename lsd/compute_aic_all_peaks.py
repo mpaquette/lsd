@@ -8,7 +8,7 @@ from time import time
 from dipy.io import read_bvals_bvecs
 # from dipy.core.sphere import HemiSphere
 from dipy.core.gradients import gradient_table
-from dipy.sims.voxel import multi_tensor
+# from dipy.sims.voxel import multi_tensor
 
 from odf_utils import true_MD_func, eigenval_from_param, gen_signal_tensor_conv
 
