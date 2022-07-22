@@ -110,7 +110,8 @@ do
              -num 10 \
              -threshold $PEAK_REL_TH \
              -mask $MASK_PATH \
-             -nthreads $NCORE
+             -nthreads $NCORE \
+             -force
 
     # Compute normalize directions and peak fractions
     python3 lsd/mrtrix_peaks_normalize.py \

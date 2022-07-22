@@ -29,6 +29,7 @@ def main(mrtrix_peaks_fname, output_basename):
     # dir has norm 1 vectors for peaks and zeros elsewhere
     peak_dir = mrtrix_peaks_reshape / mrtrix_len[..., None]
     peak_dir[np.isnan(peak_dir)] = 0
+    peak_dir = peak_dir.reshape(peak_dir.shape[:3] + (peak_dir.shape[3]*3, ))
 
     # save
     nib.Nifti1Image(nufo.astype(np.int), affine).to_filename(output_basename + '_nufo.nii.gz')

@@ -125,7 +125,7 @@ def main():
     N_data = data.shape[3]
     N_b0s = gtab.b0s_mask.sum()
     N_dwi = N_data - N_b0s
-    N_dirs = dirs.shape[3]
+    N_dirs = dirs.shape[3]//3
 
     # save the computed kernel MD
     kernel_MDs = np.ones(data.shape[:3])
@@ -179,7 +179,7 @@ def main():
 
 
     print('Concat data')
-    concat_data = np.concatenate((data[..., ~gtab.b0s_mask], dirs.reshape(dirs.shape[:3]+(3*dirs.shape[3],)), lens, sigma[..., None], ratio*np.ones(dirs.shape[:3]+(1,))), axis=3)
+    concat_data = np.concatenate((data[..., ~gtab.b0s_mask], dirs, lens, sigma[..., None], ratio*np.ones(dirs.shape[:3]+(1,))), axis=3)
     print(concat_data.shape)
 
     print('Starting AIC all peaks')
