@@ -21,6 +21,18 @@ echo $PATCHSIZE;
 echo $NCORE;
 
 
+ALLCORE=$(nproc --all)
+if [[ $NCORE -gt $ALLCORE ]]
+then
+    NCORE=$ALLCORE;
+fi
+
+if [[ $NCORE -eq -1 ]]
+then
+    NCORE=$ALLCORE;
+fi
+
+
 OUTPUT_FOLDER=$(dirname $OUTPUT_BASE);
 PROC_FOLDER=$OUTPUT_FOLDER'/lsd_processing/'
 mkdir $PROC_FOLDER
@@ -30,7 +42,7 @@ mkdir $PROC_FOLDER
 
 
 echo 'Make sure Noisemap are 3D'
-python3 utils/make_noisemap.py \
+python3 lsd/make_noisemap.py \
     $SIGMA_PATH \
     $N_PATH \
     $MASK_PATH \
@@ -46,7 +58,7 @@ N_PATH=$PROC_FOLDER'Ns_gen.nii.gz'
 # Normalize Data with b0
 
 echo 'Normalize Data with b0'
-python3 utils/normalize_data.py \
+python3 lsd/normalize_data.py \
     --in $DWI_PATH \
     --in_sigma $SIGMA_PATH \
     --in_N $N_PATH \
@@ -59,7 +71,7 @@ python3 utils/normalize_data.py \
 
 
 echo 'Fit CSA odf'
-python3 utils/fit_csa.py \
+python3 lsd/fit_csa.py \
     $PROC_FOLDER'data_norm.nii.gz' \
     $PROC_FOLDER'data_norm.bval' \
     $PROC_FOLDER'data_norm.bvec' \
@@ -76,7 +88,7 @@ do
     echo 'Ratio '$RATIO
 
     # Descoteaux "sharpening odf" deconv
-    python3 utils/sharpen_sh_parallel.py \
+    python3 lsd/sharpen_sh_parallel.py \
             --in $PROC_FOLDER'csa.nii.gz' \
             --out $PROC_FOLDER'csa_sharp_r'$RATIO'.nii.gz' \
             --mask $MASK_PATH \
@@ -88,7 +100,7 @@ do
 
     # Normalize ODF with max=1
     # This allows for absolute thresholds to behave like relative thresholds
-    python3 utils/sh_odf_normalize.py \
+    python3 lsd/sh_odf_normalize.py \
             $PROC_FOLDER'csa_sharp_r'$RATIO'.nii.gz' \
             $PROC_FOLDER'csa_sharp_r'$RATIO'_norm.nii.gz'
 
@@ -101,12 +113,12 @@ do
              -nthreads $NCORE
 
     # Compute normalize directions and peak fractions
-    python3 utils/mrtrix_peaks_normalize.py \
+    python3 lsd/mrtrix_peaks_normalize.py \
             $PROC_FOLDER'csa_sharp_r'$RATIO'_norm_peakext.nii.gz' \
             $PROC_FOLDER'csa_sharp_r'$RATIO
 
     # Compute AIC
-    python3 utils/compute_aic_all_peaks.py \
+    python3 lsd/compute_aic_all_peaks.py \
             --data $PROC_FOLDER'data_norm.nii.gz' \
             --bval $PROC_FOLDER'data_norm.bval' \
             --bvec $PROC_FOLDER'data_norm.bvec' \
@@ -156,7 +168,7 @@ done
 if [[ $PATCHSIZE -gt 1 ]]
 then
     # Picks the ratio with lowest AIC for each voxel in neighborhood
-    python3 utils/combine_aic_neigh.py \
+    python3 lsd/combine_aic_neigh.py \
             --iaic ${AICFILELIST[@]} \
             --iodf ${ODFFILELIST[@]} \
             --inufo ${NUFOFILELIST[@]} \
@@ -174,7 +186,7 @@ then
             --oratio $OUTPUT_FOLDER'/ratio_best_aic.nii.gz';
 else
     # Picks the ratio with lowest AIC for each voxel
-    python3 utils/combine_aic.py \
+    python3 lsd/combine_aic.py \
             --iaic ${AICFILELIST[@]} \
             --iodf ${ODFFILELIST[@]} \
             --inufo ${NUFOFILELIST[@]} \
