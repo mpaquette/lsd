@@ -3,6 +3,8 @@ CONFIGFILE=$1
 . $CONFIGFILE
 
 
+starttime=`date +%s`
+
 # TODO:
 # basic input "existence" sanity checks
 
@@ -36,8 +38,6 @@ fi
 OUTPUT_FOLDER=$(dirname $OUTPUT_BASE);
 PROC_FOLDER=$OUTPUT_FOLDER'/lsd_processing/'
 mkdir $PROC_FOLDER
-
-
 
 
 
@@ -206,5 +206,10 @@ else
 fi
 
 
+
+endtime=`date +%s`
+runtime=$((endtime-starttime))
+
+echo 'execution time = '$runtime' seconds'
 
 
