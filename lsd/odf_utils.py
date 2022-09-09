@@ -175,10 +175,15 @@ def eigenval_from_param(MD, ratio):
     dpar = Dpar_from_param(MD, ratio)
     return dpar, dpar / ratio
 
+# def D_Delta_from_param(MD, ratio):
+#     Dpar = Dpar_from_param(MD, ratio)
+#     Dperp = Dperp_from_param(MD, ratio)
+#     return (Dpar-Dperp)/float(Dpar+2*Dperp)
+
 def D_Delta_from_param(MD, ratio):
     Dpar = Dpar_from_param(MD, ratio)
     Dperp = Dperp_from_param(MD, ratio)
-    return (Dpar-Dperp)/float(Dpar+2*Dperp)
+    return (Dpar-Dperp)/(Dpar+2*Dperp)
 
 def gfunc(alpha):
     # return sp.sqrt(np.pi/(4*alpha)) * erf(sp.sqrt(alpha))
@@ -219,6 +224,10 @@ def gen_signal_tensor_conv(gtab, odf_dirs, odf_val, Dpar, Dperp):
 def addGaussianNoise(signal, sigma):
     return signal + sigma*np.random.randn(*signal.shape)
 
+def addRicianNoise(signal, Gsigma):
+    # not really Rician "noise", but common abuse of language
+    # Gsigma is the so-called gaussian sigma
+    return np.sqrt((signal + Gsigma*np.random.randn(*signal.shape))**2 + (Gsigma*np.random.randn(*signal.shape))**2)
 
 
 
