@@ -59,9 +59,9 @@ def main():
     affine = sh_img.affine
 
     if args.mask is None:
-        mask = np.ones(sh.shape[:3], dtype=np.bool)
+        mask = np.ones(sh.shape[:3], dtype=bool)
     else:
-        mask = nib.load(args.mask).get_fdata().astype(np.bool)
+        mask = nib.load(args.mask).get_fdata().astype(bool)
 
     lmax = calculate_max_order(sh.shape[3], False)
 

@@ -62,7 +62,7 @@ def main():
     sigmas = nib.load(PATH_SIGMA).get_fdata()
     Ns = nib.load(PATH_N).get_fdata()
 
-    mask = nib.load(PATH_MASK).get_fdata().astype(np.bool)
+    mask = nib.load(PATH_MASK).get_fdata().astype(bool)
 
     bvals = np.genfromtxt(PATH_BVAL)
     bvecs = np.genfromtxt(PATH_BVEC)

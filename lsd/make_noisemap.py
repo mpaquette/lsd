@@ -43,8 +43,8 @@ def main():
         Ns = nib.load(args.Ns).get_fdata()
 
 
-    nib.Nifti1Image(sigma.astype(np.float), ref_img.affine).to_filename(args.osigma)
-    nib.Nifti1Image(Ns.astype(np.float), ref_img.affine).to_filename(args.oNs)
+    nib.Nifti1Image(sigma.astype(np.float32), ref_img.affine).to_filename(args.osigma)
+    nib.Nifti1Image(Ns.astype(np.float32), ref_img.affine).to_filename(args.oNs)
 
 
 
