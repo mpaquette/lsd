@@ -56,7 +56,7 @@ def main(dwipath, bvalpath, bvecpath, maskpath, outputpath, NCORE=1, tau=1e-5, l
 	# print('This script assumes the first volume is a brain mask')
 	# mask = data[..., 0].astype(np.bool)
 
-	mask = nib.load(maskpath).get_fdata().astype(np.bool)
+	mask = nib.load(maskpath).get_fdata().astype(bool)
 
 
 	# CSA model
