@@ -82,7 +82,7 @@ def odf_sh_to_sharp_parallel(odfs_sh, sphere, mask=None, basis=None, ratio=3 / 1
     r, theta, phi = cart2sphere(sphere.x, sphere.y, sphere.z)
     real_sym_sh = sph_harm_lookup[basis]
 
-    B_reg, m, n = real_sym_sh(sh_order, theta, phi) # this is LEGACY
+    B_reg, m, n = real_sym_sh(sh_order, theta, phi, legacy=False)
     R, P = forward_sdt_deconv_mat(ratio, n, r2_term=r2_term)
 
     # scale lambda to account for differences in the number of

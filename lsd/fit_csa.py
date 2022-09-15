@@ -73,7 +73,7 @@ def main(dwipath, bvalpath, bvecpath, maskpath, outputpath, NCORE=1, tau=1e-5, l
 	print('Elapsed time = {:.2f} s'.format(end_time - start_time))
 
 	start_time = time()
-	tournier_sh = convert_sh_basis(csa_fit.shm_coeff, sphere_conv, input_basis='descoteaux07', nbr_processes=NCORE) # convert from LEGACY to LEGACY
+	tournier_sh = convert_sh_basis(csa_fit.shm_coeff, sphere_conv, input_basis='descoteaux07', input_legacy=True, output_legacy=False, nbr_processes=NCORE) # convert from LEGACY to Normal
 	nib.Nifti1Image(tournier_sh, affine).to_filename(outputpath)
 	end_time = time()
 	print('Elapsed time (conversion({} cores)) = {:.2f} s'.format(NCORE, end_time - start_time))
