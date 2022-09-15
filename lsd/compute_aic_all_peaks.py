@@ -12,8 +12,6 @@ from dipy.core.gradients import gradient_table
 
 from odf_utils import true_MD_func, eigenval_from_param, gen_signal_tensor_conv
 
-from dipy.reconst.shm import real_sh_descoteaux
-
 # from dipy.data import get_sphere
 # reg_sphere = get_sphere('symmetric362')
 

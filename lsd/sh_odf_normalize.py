@@ -17,7 +17,7 @@ def main(sh_fname, sh_norm_fname):
 
     # sphere = get_sphere('repulsion724')
     sphere = get_sphere('repulsion100')
-    B, m, n = real_sh_tournier(lmax, sphere.theta, sphere.phi)
+    B, m, n = real_sh_tournier(lmax, sphere.theta, sphere.phi) # this is LEGACY
 
 
     sf_maximum = np.zeros(sh.shape[:3])
@@ -38,7 +38,7 @@ def main(sh_fname, sh_norm_fname):
     end_time = time()
     print('Elapsed time (sh normalization) = {:.2f} s'.format(end_time - start_time))
 
-    nib.Nifti1Image(sh_maxnorm, affine).to_filename(sh_norm_fname)
+    nib.Nifti1Image(sh_maxnorm, affine).to_filename(sh_norm_fname) # this is LEGACY
 
 
 if __name__ == "__main__":

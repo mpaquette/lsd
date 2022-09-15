@@ -43,8 +43,8 @@ def convert_sh_basis(shm_coeff, sphere, mask=None,
     output_basis = 'descoteaux07' if input_basis == 'tournier07' else 'tournier07'
 
     sh_order = order_from_ncoef(shm_coeff.shape[-1])
-    B_in, _ = sh_to_sf_matrix(sphere, sh_order, input_basis)
-    _, invB_out = sh_to_sf_matrix(sphere, sh_order, output_basis)
+    B_in, _ = sh_to_sf_matrix(sphere, sh_order, input_basis) # default LEGACY
+    _, invB_out = sh_to_sf_matrix(sphere, sh_order, output_basis) # default LEGACY
 
     data_shape = shm_coeff.shape
     if mask is None:

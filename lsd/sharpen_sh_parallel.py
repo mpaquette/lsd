@@ -55,7 +55,7 @@ def main():
     NCORE = args.cores
 
     sh_img = nib.load(args.sh_fname)
-    sh = sh_img.get_fdata()
+    sh = sh_img.get_fdata() # this image is in SH tournier LEGACY
     affine = sh_img.affine
 
     if args.mask is None:
@@ -94,7 +94,7 @@ def main():
 
     # start_time = time()
     # tournier_sh_enh = convert_sh_basis(sh_coef_enh, sphere_conv, input_basis='descoteaux07', nbr_processes=NCORE)
-    nib.Nifti1Image(sh_csd_sharp, affine).to_filename(args.sh_sharp_fname)
+    nib.Nifti1Image(sh_csd_sharp, affine).to_filename(args.sh_sharp_fname) # this image is in SH tournier LEGACY
     # end_time = time()
     # print('Conversion to MRTRIX sh ({} cores) = {:.2f} s'.format(NCORE, end_time - start_time))
 

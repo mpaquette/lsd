@@ -104,7 +104,7 @@ do
             $PROC_FOLDER'csa_sharp_r'$RATIO'.nii.gz' \
             $PROC_FOLDER'csa_sharp_r'$RATIO'_norm.nii.gz'
 
-    # Non linear peak extraction
+    # Non linear peak extraction # this is done on LEGACY SH, probably wrong
     sh2peaks $PROC_FOLDER'csa_sharp_r'$RATIO'_norm.nii.gz' \
              $PROC_FOLDER'csa_sharp_r'$RATIO'_norm_peakext.nii.gz' \
              -num 10 \
