@@ -9,7 +9,7 @@ from dipy.data import get_sphere
 from dipy.reconst.csdeconv import odf_sh_to_sharp
 from dipy.reconst.shm import calculate_max_order
 
-from shconv import convert_sh_basis
+# from shconv import convert_sh_basis
 from _sharpen_parallel import odf_sh_to_sharp_parallel
 
 
@@ -55,7 +55,7 @@ def main():
     NCORE = args.cores
 
     sh_img = nib.load(args.sh_fname)
-    sh = sh_img.get_fdata() # this image is in SH tournier LEGACY
+    sh = sh_img.get_fdata()
     affine = sh_img.affine
 
     if args.mask is None:

@@ -94,7 +94,7 @@ def main():
         data_norm = np.clip(mask[..., None] * (data[..., diff_mask] / data_b0_mean[..., None]), 0, 1)
         np.seterr(**old_settings)
         # Concatenate mask as fake normalized b0
-        data_norm = np.concatenate((mask.astype(np.float)[...,None], data_norm), axis=3)
+        data_norm = np.concatenate((mask.astype(np.float32)[...,None], data_norm), axis=3)
 
 
         # Clean Data from unwanted values
