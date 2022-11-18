@@ -12,6 +12,9 @@ from dipy.reconst.shm import calculate_max_order
 # from shconv import convert_sh_basis
 from _sharpen_parallel import odf_sh_to_sharp_parallel
 
+import warnings
+warnings.simplefilter("ignore", UserWarning)
+
 
 DESCRIPTION =   """
 Sharpen ODFs using Descoteaux Sharpening"""

@@ -8,6 +8,9 @@ from dipy.core.ndindex import ndindex
 from dipy.reconst.shm import sph_harm_lookup
 from dipy.reconst.csdeconv import forward_sdt_deconv_mat, odf_deconv
 
+import warnings
+warnings.simplefilter("ignore", UserWarning)
+
 
 def odf_sh_to_sharp_parallel(odfs_sh, sphere, mask=None, basis=None, ratio=3 / 15., sh_order=8,
                     lambda_=1., tau=0.1, r2_term=False, maxprocess=1):
