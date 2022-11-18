@@ -6,6 +6,8 @@ from dipy.data import get_sphere
 from dipy.reconst.shm import real_sh_tournier
 from dipy.reconst.shm import calculate_max_order
 
+from tqdm import trange
+
 
 def main(sh_fname, sh_norm_fname):
 
@@ -23,8 +25,9 @@ def main(sh_fname, sh_norm_fname):
     sf_maximum = np.zeros(sh.shape[:3])
 
     start_time = time()
-    for Z in range(sh.shape[2]):
-        print('Processing Z slice {:} / {:}'.format(Z, sh.shape[2]))
+    for Z in trange(sh.shape[2]):
+    # for Z in range(sh.shape[2]):
+        # print('Processing Z slice {:} / {:}'.format(Z, sh.shape[2]))
 
         tmp = sh[:,:,Z,:].dot(B.T)
         sf_maximum[:,:,Z] = tmp.max(axis=2)
