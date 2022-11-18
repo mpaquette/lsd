@@ -3,6 +3,11 @@ import nibabel as nib
 from tqdm import tqdm
 from lsd.odf_utils import vec_angle # in radians, with proper 180 sym and normalization, and handles 0s
 
+import warnings
+warnings.simplefilter("ignore", RuntimeWarning)
+# To remove the
+# lsd/mrtrix_peaks_normalize.py:44: RuntimeWarning: All-NaN slice encountered
+# mrtrix_rel_len = mrtrix_len / np.nanmax(mrtrix_len, axis=3)[..., None]
 
 
 # def main(mrtrix_peaks_fname, config_fname, output_basename):

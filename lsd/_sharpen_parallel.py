@@ -10,6 +10,9 @@ from dipy.reconst.csdeconv import forward_sdt_deconv_mat, odf_deconv
 
 import warnings
 warnings.simplefilter("ignore", UserWarning)
+# To remove the 
+# dipy/reconst/csdeconv.py:799: 
+# UserWarning: maximum number of iterations exceeded - failed to converge
 
 
 def odf_sh_to_sharp_parallel(odfs_sh, sphere, mask=None, basis=None, ratio=3 / 15., sh_order=8,

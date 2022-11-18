@@ -14,6 +14,9 @@ from _sharpen_parallel import odf_sh_to_sharp_parallel
 
 import warnings
 warnings.simplefilter("ignore", UserWarning)
+# To remove the 
+# dipy/reconst/csdeconv.py:799: 
+# UserWarning: maximum number of iterations exceeded - failed to converge
 
 
 DESCRIPTION =   """
