@@ -219,8 +219,8 @@ def main():
 
     # load and multiply all the mask
     print('Loading Mask')
-    mask = np.ones(data_aics.shape[:3], dtype=np.bool)
-    mask_data = [nib.load(fname).get_fdata().astype(np.bool) for fname in args.mask]
+    mask = np.ones(data_aics.shape[:3], dtype=bool)
+    mask_data = [nib.load(fname).get_fdata().astype(bool) for fname in args.mask]
     for tmp in mask_data:
         mask = np.logical_and(mask, tmp)
     print('Final mask has {:} voxels ({:.1f} % of total)'.format(mask.sum(), 100*mask.sum()/np.prod(data_aics.shape[:3])))
