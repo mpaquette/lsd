@@ -16,6 +16,7 @@ from odf_utils import true_MD_func, eigenval_from_param, gen_signal_tensor_conv
 # reg_sphere = get_sphere('symmetric362')
 
 from multiprocessing import cpu_count, Pool
+from tqdm.contrib.concurrent import process_map
 
 from itertools import combinations as comb
 
@@ -188,6 +189,12 @@ def main():
     # maybe need chucksize
     with Pool(processes=NCORE) as pool:
         loop_output[mask] = pool.map(_aic_loop, concat_data[mask])
+
+
+    # # NOT READY, work in theory but chucksize is wrong and its VERY slow
+    # chunksize, extra = divmod(mask.sum(), NCORE * 4)
+    # loop_output[mask] = process_map(_aic_loop, concat_data[mask], max_workers=NCORE, chunksize=chunksize+1)
+
     aic_value = loop_output[..., 0]
     kernel_MDs = loop_output[..., 1]
     end_time = time()

@@ -87,54 +87,59 @@ for RATIO in ${RATIOS[@]};
 do
     echo 'Ratio '$RATIO
 
-    # Descoteaux "sharpening odf" deconv
-    python3 lsd/sharpen_sh_parallel.py \
-            --in $PROC_FOLDER'csa.nii.gz' \
-            --out $PROC_FOLDER'csa_sharp_r'$RATIO'.nii.gz' \
-            --mask $MASK_PATH \
-            --ratio $RATIO \
-            --tau 0.1 \
-            --lambda 1. \
-            --csa_norm True \
-            --cores $NCORE
+    if [[ ! -e $PROC_FOLDER'kernelMD_csa_sharp_r'$RATIO'.nii.gz' ]]
+    then
 
-    # Normalize ODF with max=1
-    # This allows for absolute thresholds to behave like relative thresholds
-    python3 lsd/sh_odf_normalize.py \
-            $PROC_FOLDER'csa_sharp_r'$RATIO'.nii.gz' \
-            $PROC_FOLDER'csa_sharp_r'$RATIO'_norm.nii.gz'
+        # Descoteaux "sharpening odf" deconv
+        python3 lsd/sharpen_sh_parallel.py \
+                --in $PROC_FOLDER'csa.nii.gz' \
+                --out $PROC_FOLDER'csa_sharp_r'$RATIO'.nii.gz' \
+                --mask $MASK_PATH \
+                --ratio $RATIO \
+                --tau 0.1 \
+                --lambda 1. \
+                --csa_norm True \
+                --cores $NCORE
 
-    # Non linear peak extraction
-    sh2peaks $PROC_FOLDER'csa_sharp_r'$RATIO'_norm.nii.gz' \
-             $PROC_FOLDER'csa_sharp_r'$RATIO'_norm_peakext.nii.gz' \
-             -num 10 \
-             -threshold $PEAK_REL_TH \
-             -mask $MASK_PATH \
-             -nthreads $NCORE \
-             -force
+        # Normalize ODF with max=1
+        # This allows for absolute thresholds to behave like relative thresholds
+        python3 lsd/sh_odf_normalize.py \
+                $PROC_FOLDER'csa_sharp_r'$RATIO'.nii.gz' \
+                $PROC_FOLDER'csa_sharp_r'$RATIO'_norm.nii.gz'
 
-    # Compute normalize directions and peak fractions
-    python3 lsd/mrtrix_peaks_normalize.py \
-            $PROC_FOLDER'csa_sharp_r'$RATIO'_norm_peakext.nii.gz' \
-            $PEAK_REL_TH \
-            $PEAK_ANG_SEP \
-            $PROC_FOLDER'csa_sharp_r'$RATIO
+        # Non linear peak extraction
+        sh2peaks $PROC_FOLDER'csa_sharp_r'$RATIO'_norm.nii.gz' \
+                 $PROC_FOLDER'csa_sharp_r'$RATIO'_norm_peakext.nii.gz' \
+                 -num 10 \
+                 -threshold $PEAK_REL_TH \
+                 -mask $MASK_PATH \
+                 -nthreads $NCORE \
+                 -force
 
-    # Compute AIC
-    python3 lsd/compute_aic_all_peaks.py \
-            --data $PROC_FOLDER'data_norm.nii.gz' \
-            --bval $PROC_FOLDER'data_norm.bval' \
-            --bvec $PROC_FOLDER'data_norm.bvec' \
-            --mask $MASK_PATH \
-            --inufo $PROC_FOLDER'csa_sharp_r'$RATIO'_nufo.nii.gz' \
-            --idirs $PROC_FOLDER'csa_sharp_r'$RATIO'_peakdir.nii.gz' \
-            --ilen $PROC_FOLDER'csa_sharp_r'$RATIO'_peakfrac.nii.gz' \
-            --sigma $PROC_FOLDER'sigma_norm.nii.gz' \
-            --ratio $RATIO \
-            --oaic $PROC_FOLDER'aic_csa_sharp_r'$RATIO'.nii.gz' \
-            --oMD $PROC_FOLDER'kernelMD_csa_sharp_r'$RATIO'.nii.gz' \
-            --cores $NCORE
+        # Compute normalize directions and peak fractions
+        python3 lsd/mrtrix_peaks_normalize.py \
+                $PROC_FOLDER'csa_sharp_r'$RATIO'_norm_peakext.nii.gz' \
+                $PEAK_REL_TH \
+                $PEAK_ANG_SEP \
+                $PROC_FOLDER'csa_sharp_r'$RATIO
 
+        # Compute AIC
+        python3 lsd/compute_aic_all_peaks.py \
+                --data $PROC_FOLDER'data_norm.nii.gz' \
+                --bval $PROC_FOLDER'data_norm.bval' \
+                --bvec $PROC_FOLDER'data_norm.bvec' \
+                --mask $MASK_PATH \
+                --inufo $PROC_FOLDER'csa_sharp_r'$RATIO'_nufo.nii.gz' \
+                --idirs $PROC_FOLDER'csa_sharp_r'$RATIO'_peakdir.nii.gz' \
+                --ilen $PROC_FOLDER'csa_sharp_r'$RATIO'_peakfrac.nii.gz' \
+                --sigma $PROC_FOLDER'sigma_norm.nii.gz' \
+                --ratio $RATIO \
+                --oaic $PROC_FOLDER'aic_csa_sharp_r'$RATIO'.nii.gz' \
+                --oMD $PROC_FOLDER'kernelMD_csa_sharp_r'$RATIO'.nii.gz' \
+                --cores $NCORE
+    else
+        echo 'Output files exist, skipping';
+    fi
 done
 
 
@@ -207,6 +212,12 @@ else
             --oratio $OUTPUT_FOLDER'/ratio_best_aic.nii.gz';
 fi
 
+
+# Normalize ODF with max=1
+# This allows for absolute thresholds to behave like relative thresholds
+python3 lsd/sh_odf_normalize.py \
+        $OUTPUT_FOLDER'/odf_best_aic.nii.gz' \
+        $OUTPUT_FOLDER'/odf_best_aic_maxnorm.nii.gz'
 
 
 endtime=`date +%s`

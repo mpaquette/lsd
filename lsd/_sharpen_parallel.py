@@ -1,6 +1,7 @@
 import numpy as np
 
 from multiprocessing import cpu_count, Pool
+from tqdm.contrib.concurrent import process_map
 
 from dipy.core.geometry import cart2sphere
 from dipy.core.ndindex import ndindex
@@ -108,6 +109,10 @@ def odf_sh_to_sharp_parallel(odfs_sh, sphere, mask=None, basis=None, ratio=3 / 1
     # maybe need chucksize
     with Pool(processes=nprocess) as pool:
         fodf_sh[mask] = pool.map(_odf_deconv, odfs_sh[mask])
+
+    # # NOT READY, work in theory but chucksize is wrong and its VERY slow
+    # chunksize, extra = divmod(mask.sum(), nprocess * 4)
+    # fodf_sh[mask] = process_map(_odf_deconv, odfs_sh[mask], max_workers=nprocess, chunksize=chunksize+1)
 
 
     return fodf_sh
