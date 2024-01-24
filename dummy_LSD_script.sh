@@ -37,11 +37,11 @@ fi
 
 OUTPUT_FOLDER=$(dirname $OUTPUT_BASE);
 PROC_FOLDER=$OUTPUT_FOLDER'/lsd_processing/'
-mkdir $PROC_FOLDER
+mkdir -p $PROC_FOLDER
 
 
 
-echo 'Make sure Noisemap are 3D'
+echo 'Make sure Noisemap are at least 3D'
 python3 lsd/make_noisemap.py \
     $SIGMA_PATH \
     $N_PATH \
@@ -49,14 +49,14 @@ python3 lsd/make_noisemap.py \
     $PROC_FOLDER'sigma_gen.nii.gz' \
     $PROC_FOLDER'Ns_gen.nii.gz' 
 
+
 # overwrite paths
 SIGMA_PATH=$PROC_FOLDER'sigma_gen.nii.gz'
 N_PATH=$PROC_FOLDER'Ns_gen.nii.gz'
 
 
-####################################
-# Normalize Data with b0
-
+###################################
+Normalize Data with b0
 echo 'Normalize Data with b0'
 python3 lsd/normalize_data.py \
     --in $DWI_PATH \
@@ -66,6 +66,23 @@ python3 lsd/normalize_data.py \
     --bval $BVAL_PATH \
     --bvec $BVEC_PATH \
     --out_folder $PROC_FOLDER
+
+if [ "$SIGMA_IS_NORMALIZED" = 1 ]; then
+    echo "Sigma assumed to be already b0 normalized";
+    cp -f ${PROC_FOLDER}/sigma_gen.nii.gz ${PROC_FOLDER}/sigma_norm.nii.gz;
+fi
+
+
+if [ "$(mrinfo -ndim ${PROC_FOLDER}/sigma_norm.nii.gz)" = 4 ]; 
+then
+    echo "Sigma is 4D, using voxelwise AIC function";
+    SCRIPT_AIC=lsd/compute_aic_all_peaks_voxelwiseSigma.py;
+else
+   echo "Sigma is 3D, using iid AIC function";
+    SCRIPT_AIC=lsd/compute_aic_all_peaks.py;
+fi
+
+
 #
 ##################
 
@@ -124,7 +141,7 @@ do
                 $PROC_FOLDER'csa_sharp_r'$RATIO
 
         # Compute AIC
-        python3 lsd/compute_aic_all_peaks.py \
+        python3 ${SCRIPT_AIC} \
                 --data $PROC_FOLDER'data_norm.nii.gz' \
                 --bval $PROC_FOLDER'data_norm.bval' \
                 --bvec $PROC_FOLDER'data_norm.bvec' \
@@ -173,44 +190,33 @@ do
 done
 
 
+
 if [[ $PATCHSIZE -gt 1 ]]
 then
-    # Picks the ratio with lowest AIC for each voxel in neighborhood
-    python3 lsd/combine_aic_neigh.py \
-            --iaic ${AICFILELIST[@]} \
-            --iodf ${ODFFILELIST[@]} \
-            --inufo ${NUFOFILELIST[@]} \
-            --ipeak ${PEAKFILELIST[@]} \
-            --ipeaklen ${PEAKLENFILELIST[@]} \
-            --ikMD ${KERNELMDFILELIST[@]} \
-            --mask $MASK_PATH \
-            --ratios ${RATIOS[@]} \
-            --oodf $OUTPUT_FOLDER'/odf_best_aic.nii.gz' \
-            --onufo $OUTPUT_FOLDER'/nufo_best_aic.nii.gz' \
-            --opeak $OUTPUT_FOLDER'/peak_best_aic.nii.gz' \
-            --opeaklen $OUTPUT_FOLDER'/peaklen_best_aic.nii.gz' \
-            --okMD $OUTPUT_FOLDER'/kernel_MD_best_aic.nii.gz' \
-            --oaic $OUTPUT_FOLDER'/aic_best_aic.nii.gz' \
-            --oratio $OUTPUT_FOLDER'/ratio_best_aic.nii.gz';
+    echo "Using Neighboorhood in AIC combine"
+    SCRIPT_COMBINE_AIC=lsd/combine_aic_neigh.py
 else
-    # Picks the ratio with lowest AIC for each voxel
-    python3 lsd/combine_aic.py \
-            --iaic ${AICFILELIST[@]} \
-            --iodf ${ODFFILELIST[@]} \
-            --inufo ${NUFOFILELIST[@]} \
-            --ipeak ${PEAKFILELIST[@]} \
-            --ipeaklen ${PEAKLENFILELIST[@]} \
-            --ikMD ${KERNELMDFILELIST[@]} \
-            --mask $MASK_PATH \
-            --ratios ${RATIOS[@]} \
-            --oodf $OUTPUT_FOLDER'/odf_best_aic.nii.gz' \
-            --onufo $OUTPUT_FOLDER'/nufo_best_aic.nii.gz' \
-            --opeak $OUTPUT_FOLDER'/peak_best_aic.nii.gz' \
-            --opeaklen $OUTPUT_FOLDER'/peaklen_best_aic.nii.gz' \
-            --okMD $OUTPUT_FOLDER'/kernel_MD_best_aic.nii.gz' \
-            --oaic $OUTPUT_FOLDER'/aic_best_aic.nii.gz' \
-            --oratio $OUTPUT_FOLDER'/ratio_best_aic.nii.gz';
+    echo "Using Voxelwise AIC combine without neighborhood"
+    SCRIPT_COMBINE_AIC=lsd/combine_aic.py
 fi
+
+python3 ${SCRIPT_COMBINE_AIC} \
+        --iaic ${AICFILELIST[@]} \
+        --iodf ${ODFFILELIST[@]} \
+        --inufo ${NUFOFILELIST[@]} \
+        --ipeak ${PEAKFILELIST[@]} \
+        --ipeaklen ${PEAKLENFILELIST[@]} \
+        --ikMD ${KERNELMDFILELIST[@]} \
+        --mask $MASK_PATH \
+        --ratios ${RATIOS[@]} \
+        --oodf $OUTPUT_FOLDER'/odf_best_aic.nii.gz' \
+        --onufo $OUTPUT_FOLDER'/nufo_best_aic.nii.gz' \
+        --opeak $OUTPUT_FOLDER'/peak_best_aic.nii.gz' \
+        --opeaklen $OUTPUT_FOLDER'/peaklen_best_aic.nii.gz' \
+        --okMD $OUTPUT_FOLDER'/kernel_MD_best_aic.nii.gz' \
+        --oaic $OUTPUT_FOLDER'/aic_best_aic.nii.gz' \
+        --oratio $OUTPUT_FOLDER'/ratio_best_aic.nii.gz';
+
 
 
 # Normalize ODF with max=1
@@ -218,6 +224,41 @@ fi
 python3 lsd/sh_odf_normalize.py \
         $OUTPUT_FOLDER'/odf_best_aic.nii.gz' \
         $OUTPUT_FOLDER'/odf_best_aic_maxnorm.nii.gz'
+
+
+
+# Normalize the maxnorm odf with biggest peak length (less sensitive to sh order / num point on tesselation for max)
+python3 lsd/maxnorm_odf_peak_normalize.py \
+        --odf ${OUTPUT_FOLDER}/odf_best_aic_maxnorm.nii.gz \
+        --mask ${MASK_PATH} \
+        --outPEAK ${PROC_FOLDER}/odf_best_aic_maxnorm_peakext1.nii.gz \
+        --outPEAKNORM ${PROC_FOLDER}/odf_best_aic_maxnorm_peakext1_len.nii.gz \
+        --outPEAKNAN ${PROC_FOLDER}/odf_best_aic_maxnorm_peakext1_nan.nii.gz \
+        --outODF ${OUTPUT_FOLDER}/odf_best_aic_peaknorm.nii.gz \
+        --th ${PEAK_REL_TH} \
+        --cores ${NCORE}
+
+
+# Computing AIC for the no peak model (using MD approx from SM and ratio=1.0 )
+python3 lsd/aic_no_peaks.py \
+        --data ${PROC_FOLDER}/data_norm.nii.gz \
+        --bval ${PROC_FOLDER}/data_norm.bval \
+        --bvec ${PROC_FOLDER}/data_norm.bvec \
+        --mask ${MASK_PATH} \
+        --sigma ${PROC_FOLDER}/sigma_norm.nii.gz \
+        --oaic ${PROC_FOLDER}/aic_no_peak.nii.gz \
+        --oMD ${PROC_FOLDER}/MD_no_peak.nii.gz \
+        --cores ${NCORE}
+
+# compute mask where no peak model has lower AIC than best AIC from lsd
+mrcalc ${PROC_FOLDER}/aic_no_peak.nii.gz \
+       ${OUTPUT_FOLDER}/aic_best_aic.nii.gz 
+       -lt \
+       ${MASK_PATH} \
+       -mult \
+       ${OUTPUT_FOLDER}/mask_no_peak_best.nii.gz
+
+
 
 
 endtime=`date +%s`

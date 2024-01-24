@@ -22,7 +22,7 @@ from itertools import combinations as comb
 
 
 DESCRIPTION = """
-compute AIC from all peaks
+Compute AIC from all peaks
 """
 
 np.set_printoptions(precision=2)
@@ -65,6 +65,7 @@ def gaussian_log_likelihood(diff, sigma):
 
 def multigaussian_log_likelihood(diffs, sigma):
     # iid gaussian
+    # still works with multiple different sigma, as long as independant
     return np.sum(gaussian_log_likelihood(diffs, sigma))
 
 

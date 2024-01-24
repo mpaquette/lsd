@@ -85,7 +85,7 @@ def main():
         # TODO
         print('Current Version of Script only works with single shell data.')
     elif len(bvals_shells) < 1:
-        print('No Diffusion Shells Found in privided data.')
+        print('No Diffusion Shells Found in provided data.')
     elif len(bvals_shells == 1):
         diff_mask = bvals_round != 0
 
@@ -113,8 +113,12 @@ def main():
 
     # compute stable sigma estimation and normalize
     old_settings = np.seterr(divide='ignore', invalid='ignore')
-    sigma_stable = sigmas*Ns / np.mean(Ns)
-    sigma_norm = sigma_stable / data_b0_mean
+    if sigmas.ndim == 3:
+        sigma_stable = sigmas*Ns / np.mean(Ns)
+        sigma_norm = sigma_stable / data_b0_mean
+    elif sigmas.ndim == 4:
+        sigma_stable = sigmas*Ns[..., None] / np.mean(Ns)
+        sigma_norm = sigma_stable / data_b0_mean[..., None]
     np.seterr(**old_settings)
 
     # cleanup sigma
