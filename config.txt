@@ -8,12 +8,13 @@ BVEC_PATH=
 MASK_PATH=
 # Path to noise sigmas
 SIGMA_PATH=
+SIGMA_IS_NORMALIZED=0
 # Path to noise Ns
 N_PATH=
 # Basename for outputs
 OUTPUT_BASE=
 # List of deconvolution ratios
-RATIOS=(1.1 1.2 1.4 1.6 1.8 2.0 2.2 2.4 2.6 2.8 3.0 3.5 4.0 4.5 5.0 5.5 6.0)
+RATIOS=(1.1 1.2 1.4 1.6 1.8 2.0 2.2 2.4 2.6 2.8 3.0 3.5 4.0 4.5 5.0 5.5 6.0 7.0 8.0 10.0 )
 # Maximum SH order
 SHMAX=8
 # Relative amplitude threshold for peak extraction
