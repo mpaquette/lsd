@@ -1,7 +1,7 @@
 import numpy as np
 import nibabel as nib
 from tqdm import tqdm
-from lsd.odf_utils import vec_angle # in radians, with proper 180 sym and normalization, and handles 0s
+from odf_utils import vec_angle # in radians, with proper 180 sym and normalization, and handles 0s
 
 import warnings
 warnings.simplefilter("ignore", RuntimeWarning)

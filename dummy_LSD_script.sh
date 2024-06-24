@@ -56,7 +56,7 @@ N_PATH=$PROC_FOLDER'Ns_gen.nii.gz'
 
 
 ###################################
-Normalize Data with b0
+# Normalize Data with b0
 echo 'Normalize Data with b0'
 python3 lsd/normalize_data.py \
     --in $DWI_PATH \
@@ -252,7 +252,7 @@ python3 lsd/aic_no_peaks.py \
 
 # compute mask where no peak model has lower AIC than best AIC from lsd
 mrcalc ${PROC_FOLDER}/aic_no_peak.nii.gz \
-       ${OUTPUT_FOLDER}/aic_best_aic.nii.gz 
+       ${OUTPUT_FOLDER}/aic_best_aic.nii.gz \
        -lt \
        ${MASK_PATH} \
        -mult \
