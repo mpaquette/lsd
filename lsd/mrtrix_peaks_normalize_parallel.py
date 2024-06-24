@@ -84,7 +84,7 @@ def main(mrtrix_peaks_fname, peak_rel_th, peak_ang_sep, output_basename, cores=1
     #                 if vec_angle(voxpeak[i], voxpeak[j]) < PEAK_ANG_SEP_RAD:
     #                     mask_too_close_peak[idx + (j,)] = True # kill it
 
-    # global _peaks_too_close_loop # this is a hack to make the local function pickleable
+    global _peaks_too_close_loop # this is a hack to make the local function pickleable
     def _peaks_too_close_loop(peaks):
         nufo_idx = (~np.isnan(peaks)).sum() // 3
         voxpeak = peaks[:nufo_idx] # Nx3
