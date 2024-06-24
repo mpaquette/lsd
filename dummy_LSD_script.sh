@@ -134,11 +134,12 @@ do
                  -force
 
         # Compute normalize directions and peak fractions
-        python3 lsd/mrtrix_peaks_normalize.py \
+        python3 lsd/mrtrix_peaks_normalize_parallel.py \
                 $PROC_FOLDER'csa_sharp_r'$RATIO'_norm_peakext.nii.gz' \
                 $PEAK_REL_TH \
                 $PEAK_ANG_SEP \
-                $PROC_FOLDER'csa_sharp_r'$RATIO
+                $PROC_FOLDER'csa_sharp_r'$RATIO \
+                $NCORE
 
         # Compute AIC
         python3 ${SCRIPT_AIC} \
