@@ -64,6 +64,7 @@ def main(mrtrix_peaks_fname, peak_rel_th, peak_ang_sep, output_basename, cores=1
 
 
     # REORDER PEAKS (post remove-too-small)
+    mask = (nufo != 0)
     for idx in np.ndindex(mrtrix_peaks_reshape.shape[:3]):
         if mask[idx]:
             sort_idx = np.argsort(-mrtrix_len[idx])
